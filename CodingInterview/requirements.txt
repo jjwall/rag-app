@@ -1,0 +1,25 @@
+# Core dependencies for interview
+fastapi
+uvicorn
+pydantic
+chromadb
+langchain
+langchain-openai
+openai
+python-dotenv
+httpx
+tiktoken
+
+# Optional AI Frameworks (candidates can install as needed)
+# Uncomment the ones you want to use:
+
+# fastagency
+# crewai
+# autogen-agentchat
+# llama-index
+# langgraph
+# langchain-community
+
+# Additional useful packages
+# numpy
+# pandas
