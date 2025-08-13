@@ -1,5 +1,6 @@
 import httpx
 import ollama
+import json
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 
@@ -19,9 +20,20 @@ def load_vector_db():
     {context}
     Question: {question}
     """
+    formatted_prompt += """
+    Respond only with valid JSON in the format of: 
+
+    {
+        "answer": [your response goes here]
+    }
+    
+    . Do not write an introduction or summary.
+    """
 
     response = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': formatted_prompt}])
-    print(response['message']['content'])
+    response_content = response['message']['content']
+    response_content_dict = json.loads(response_content)
+    print(response_content_dict["answer"])
 
 load_vector_db()
 
