@@ -7,15 +7,21 @@ from langchain_ollama import OllamaEmbeddings
 local_model = 'llama3.2'
 embedding_model = 'nomic-embed-text'
 
-def load_vector_db():
+def run_rag_app():
+    # Set up data to load into vector db. This could be text or pdf(s).
     data_to_load = ["The sky is yellow."]
+    # Create vector db and pass in embedding model. 
+    # For now we will cache it in this variable. Could be stored persistently elswhere.
     vector_db = Chroma.from_texts(data_to_load, OllamaEmbeddings(model=embedding_model))
+    # Set up a retriever to pull relevant context from vector db.
     retriever = vector_db.as_retriever()
     question = "What color is the sky?"
     docs = retriever.invoke(question)
+    # Set up relevant context to be appended to prompt string. 
     context = "\n\n".join(doc.page_content for doc in docs) # docs.page_content
     print(context)
 
+    # Set up prompt to include relevant context and for model to respond with json.
     formatted_prompt = f"""Answer the question based ONLY on the following context:
     {context}
     Question: {question}
@@ -24,18 +30,21 @@ def load_vector_db():
     Respond only with valid JSON in the format of: 
 
     {
-        "answer": [your response goes here]
+        "answer": response goes here
     }
     
     . Do not write an introduction or summary.
     """
 
+    # Pass prompt to query local model with our question for inference based on relevant context.
     response = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': formatted_prompt}])
     response_content = response['message']['content']
+    print(response_content)
+    # Load response as json / python dict.
     response_content_dict = json.loads(response_content)
     print(response_content_dict["answer"])
 
-load_vector_db()
+run_rag_app()
 
 
 def run_agent():
