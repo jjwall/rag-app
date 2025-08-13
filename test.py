@@ -1,14 +1,24 @@
 import httpx
+import ollama
 
-url = "http://localhost:8001/send_data"
+def run_agent():
+    inference = ollama.chat(model='llama3.2', messages=[{'role': 'user', 'content': 'Why is the sky blue?'}])
+    print(inference)
 
-data = '''
-{
-    "text": "This is test #2"
-}
-'''
+run_agent()
 
-response = httpx.post(url, data=data, headers={"Content-Type": "application/json"})
-# print(response.json())
-responseJson = response.json()
-print(responseJson['data_sent'])
+def get_data():
+    url1 = "http://localhost:8001/send_data"
+    url2 = "http://localhost:8001/receive_data"
+
+    data = '''
+    {
+        "text": "This is test #2"
+    }
+    '''
+
+    response = httpx.post(url1, data=data, headers={"Content-Type": "application/json"})
+    # response = httpx.get(url2, headers={"Content-Type": "application/json"})
+    # print(response.json())
+    responseJson = response.json()
+    print(responseJson) # ['data']['text'])
